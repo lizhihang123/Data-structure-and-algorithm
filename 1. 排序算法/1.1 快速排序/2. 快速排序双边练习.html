@@ -37,10 +37,13 @@
 
         function quickSort(nums, startIndex, endIndex) {
             // debugger
+            // 这是 递归的出口
             if (startIndex > endIndex) {
                 return
             }
+            // 切分分治的基准值
             let privotIndex = partition(nums, startIndex, endIndex)
+            // 递归的出口
             quickSort(nums, startIndex, privotIndex - 1)
             quickSort(nums, privotIndex + 1, endIndex)
         }
@@ -50,20 +53,24 @@
             // debugger
             let left = startIndex
             let right = endIndex
+            // 这个是比较的基准值
             let privt = nums[startIndex]
             while (left < right) {
                 while (left < right && nums[right] > privt) {
                     right--
                 }
-                while (left < right && nums[left] < privt) {
+                // 这里的等于很容易出错
+                while (left < right && nums[left] <= privt) {
                     left++
                 }
+                // 如果左边也停止了就交换左右指针的值
                 if (left < right) {
                     let temp = nums[left]
                     nums[left] = nums[right]
                     nums[right] = temp
                 }
             }
+            // 交换基准值和 “左右指针相碰的位置”
             nums[startIndex] = nums[left]
             nums[left] = privt
             return left
