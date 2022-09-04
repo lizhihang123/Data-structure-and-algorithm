@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 优化的思路，原本要交换8趟，但是在第4趟，两两元素没有进行交换了，就可以停止不需要进行交换了
+        // 通过一个变量，只要进行了交换，这个变量就是true，否则是false，是true 就return
+        function swap(arr, i, j) {
+            let temp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = temp
+        }
+        // 2 排序
+        function BubbleSort(nums) {
+            let len = nums.length
+            // 外面for循环 表示走几趟，走 len-1趟，[5, 3, 2, 1] 走三趟
+            for (let i = 0; i < len - 1; i++) {
+                let isSorted = true
+                debugger
+                if (i === 3 || i === 4) {
+                    debugger
+                }
+                // 里面的for循环 表示 每一趟走多少次，长度 - i - 1 而i表示当前是第几趟
+                for (let j = 0; j < len - i - 1; j++) {
+                    if (nums[j] > nums[j + 1]) {
+                        swap(nums, j, j + 1)
+                        isSorted = false
+                    }
+                }
+                if (isSorted) {
+                    break
+                }
+            }
+            return nums
+        }
+        // console.log(BubbleSort([5, 8, 6, 3, 9, 2, 1, 7]));
+        console.log(BubbleSort([5, 2, 1, 6, 3, 7, 8, 9]));
+    </script>
+</body>
+
+</html>
