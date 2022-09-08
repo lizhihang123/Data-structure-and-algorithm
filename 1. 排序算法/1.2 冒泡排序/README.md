@@ -161,8 +161,12 @@ console.log(BubbleSort([3, 4, 2, 1, 5, 6, 7, 8]));
 
 ## 6. 鸡尾酒排序
 
+从左到右进行一轮冒泡，从右到左再进行一轮冒泡；
+
+和单纯的冒泡排序的区别是什么呢？
+
 ```diff
-function swap(arr, m, n) {
+		function swap(arr, m, n) {
             let temp = arr[m]
             arr[m] = arr[n]
             arr[n] = temp
