@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 求next数组
+        const getNext = function (needle) {
+            // 1. 初始化变量
+            let next = []
+            let j = 0
+            next.push(j)
+            // 2. for循环 i在j的后面
+            for (let i = 1; i < needle.length; i++) {
+                // 前缀匹配 -> 字符不相等
+                while (j > 0 && needle[i] !== needle[j]) {
+                    j = next[j - 1]
+                }
+                // 前缀匹配 -> 字符相等
+                if (needle[j] === needle[i]) {
+                    j++
+                }
+                // 不管相等与否 字符都要放进入 next数组
+                next.push(j)
+            }
+            return next
+        }
+        console.log(getNext('ababaaabb')); // [0, 0, 1, 1, 2, 3, 1, 1, 2, 0]
+        // 看看字符串是否匹配
+        const strStr = function (haystack, needle) {
+            // 1. 判空
+            if (haystack === '') {
+                return -1
+            }
+            // 2. 声明j变量
+            let j = 0
+
+            // 3. 获取前缀next数组
+            let next = getNext(needle)
+
+            // 4. 进行主串和模式串的遍历
+            for (let i = 0; i < haystack.length; i++) {
+                // 主 与 子匹配 -> 不相等
+                while (j > 0 && haystack[i] !== needle[j]) {
+                    j = next[j - 1]
+                }
+                // 主 与 子匹配 -> 相等
+                // j要++ j 必须要++ 不++怎么行呢
+                if (haystack[i] === needle[j]) {
+                    j++
+                }
+                // 匹配到头了
+                if (j === needle.length) {
+                    return (i - needle.length + 1)
+                }
+            }
+            // 没有找到啊
+            return -1
+        }
+        console.log(strStr('aabaabaaf', 'aabaaf')); // 3
+        // console.log(strStr('aabaabaafdaabaafg', 'aabaafg')); // 10
+
+
+
+
+    </script>
+</body>
+
+</html>
