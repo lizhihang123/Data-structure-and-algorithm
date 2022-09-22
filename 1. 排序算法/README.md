@@ -1167,11 +1167,105 @@ console.log(sortArray([94, 90, 95, 95, 99]));
 
 
 
+# 6.桶排序
 
 
-# 6. 插入排序
 
-## 6.1 插入排序
+## 1. 概念
+
+把若干个元素放到桶里面去，桶里面的元素各自排序，再把元素取出来就是排序后的结果。
+
+如何判断有几个桶？根据最大值和最小值的差 / 每个桶里面的元素个数
+
+如何判断每个元素应该放到哪个桶？ 目标元素 - min / 每个桶里面的元素个数
+
+![image-20220922091638915](https://typora-1309613071.cos.ap-shanghai.myqcloud.com/typora/image-20220922091638915.png)
+
+## 2. 代码
+
+```js
+function bucketSort(arr, bucketSize) {
+    // 1.判空
+    if (arr.length === 0) {
+        return
+    }
+    // 2.1 设置每个桶的区间范围的默认值 => 每个桶的区间范围可以是预先传入的
+    let default_bucket_size = 5
+    bucketSize = bucketSize | default_bucket_size
+    // 2.2 求出最大值和最小值=>为了求出有多少个桶
+    let min = arr[0]
+    let max = arr[0]
+    for (let i = 0; i < arr.length; i++) {
+        if (max < arr[i]) {
+            max = arr[i]
+        }
+        if (min > arr[i]) {
+            min = arr[i]
+        }
+    }
+    let bucketCount = Math.floor((max - min) / bucketSize) + 1
+    // 创建桶数组
+    // 生成二维数组
+    let array = new Array(bucketCount)
+    for (let i = 0; i < bucketCount; i++) {
+        array[i] = []
+    }
+    // 4.把arr数据放入新生成的桶里面去
+    for (let i = 0; i < arr.length; i++) {
+        // debugger
+        array[Math.floor((arr[i] - min) / bucketSize)].push(arr[i])
+    }
+    arr = []
+    // 5.再利用归并排序或者归并排序的优化版本对里面的每个值进行排序 
+    for (let i = 0; i < array.length; i++) {
+        // debugger
+        mergeSort(array[i]) // 对array里面的二维数组进行排序
+        for (let j = 0; j < array[i].length; j++) {
+            // debugger
+            // 6.内层再嵌套一层for循环把值放到arr数组里面去
+            arr.push(array[i][j])
+        }
+    }
+    return arr
+}
+```
+
+
+
+**时间复杂度分析**
+
+```diff
+1. 时间复杂度：O(n) / O(nlogn)
+平均情况下的时间复杂度O(n) 最坏情况下的时间复杂度O(nlogn)
+平均情况：假设n个元素需要排序 分为n个桶 每个桶里面一个元素
+    - 求最大值和最小值 运算量为n
+    - 创建空桶 运算量为n
+    - 把原始数列的元素匹配到空桶里面 运算量为n
+    - 在桶的内部做排序，在元素分布相对均匀的情况下，所有桶的运算量之和为n
+    - 输出排序序列 -> 原始数组 运算量为n
+    最终为O(n)
+最坏的情况：nlogn = nlogn[排序使用] + n = n(logn + 1) 而1可以忽略不计 就是nlogn
+```
+
+
+
+**空间复杂度分析**
+
+ 空间复杂度：O(n)，一个空的数组 -> n
+
+
+
+**是不是稳定排序？**
+
+​	是稳定排序。归并排序是稳定排序，而桶排序用到了归并，也是稳定排序
+
+**是不是原地排序？**
+
+​	不是，有借助其他数组
+
+# 7. 插入排序
+
+## 7.1 插入排序
 
 初级写法
 
@@ -1297,3 +1391,22 @@ j - 1 为 6 ,大于4， 改 7 为6，变为 5 6 6 7 8
 
 
 
+
+
+
+
+# 8.选择排序
+
+
+
+## 1.概念
+
+选定第一个基准值，表示最小值，遍历后续所有的值，如果有更小的，就要和基准值进行交换。
+
+然后选定第二个值为基准值，表示最小值，遍历后续所有的值，如果有更小的，和第二个值进行交换。以此类推
+
+vs冒泡排序：冒泡如果有相同的元素，就不会进行交换了。？
+
+<img src="https://typora-1309613071.cos.ap-shanghai.myqcloud.com/typora/image-20220922090840014.png" alt="image-20220922090840014" style="zoom:50%;" />
+
+## 2.代码
