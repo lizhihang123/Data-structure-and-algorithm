@@ -204,16 +204,6 @@ function partition(arr, startIndex, endIndex) {
 console.log(sortArray([4, 7, 3, 5, 6, 2, 8, 1]));
 ```
 
-
-
-
-
-
-
-
-
-
-
 # 2.冒泡排序
 
 
@@ -1265,128 +1255,106 @@ function bucketSort(arr, bucketSize) {
 
 # 7. 插入排序
 
-## 7.1 插入排序
+## 7.1 概念
 
-初级写法
+1 核心思路：
+[2, 3, 1]此时2是有序区，3和2比较，大于2，那么有序区扩大包含2， 3；1和3比较，更小，交换，1和2比较，更小，交换，此时有序区为1,2,3
+维护有序区，让无序区里面的元素和有序区的元素进行比较，整体排序完成
+例子：扑克牌，抽到一张牌，如何进行比较。和前面的元素比较，如果更大，就停止插入
+2 复杂度分析：
+时间复杂度：最坏情况为O(n ^ 2) 为什么？因为外层循环次数为n，内层循环次数每一轮 在最坏的情况下都是 1 2 3 4 直到 n - 1
+空间复杂度：是O(1) 是原地排序 没有借助第三方的空间 是原地排序
+3 是稳定的排序吗？
+
+是
 
 
 
-优化写法：目的是减少交换的次数
+
+
+## 7.2 代码
 
 ```js
-        let insertSort = function insertSort (arr) {
-
-            for (let i = 0; i < arr.length; i++) {
-                let iIndex = i
-                let moveIndex = i - 1
-                let temp = arr[i]
-
-                // 如果蓝色指针的值 小于 红色指针的值 直接continue
-                if (arr[moveIndex] < arr[i]) {
-                    continue
-                }
-
-                // !为什么 j 要大于-1
-                for (let j = i; j > -1; j--) {
-
-                    // 如果蓝色指针的值小于 temp的值 
-                    // 1、为什么要把temp 和 蓝色指针的值进行比较
-                    // 2、为什么要把temp赋值给他arr[j]
-                    if (arr[j - 1] < temp) {
-                        arr[j] = temp
-                        break
-                    }
-
-                    // 如果蓝色指针指向 空
-                    if (!arr[j - 1]) {
-                        arr[j] = temp
-                        break
-                    }
-
-
-                    // 如果蓝色指针的值 大于 红色指针的值
-                    arr[j] = arr[j - 1]
-                }
+function swap(arr, num1, num2) {
+    let temp = arr[num1]
+    arr[num1] = arr[num2]
+    arr[num2] = temp
+    return arr
+}
+function insertSort(arr) {
+    // 1.判空
+    // 2.第一层for 遍历arr所有元素
+    // 3.第二层for 每一个元素和前面的元素进行比较
+    if (arr.length < 2) {
+        return arr
+    }
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j > 0; j--) {
+            // 如果当前元素小于上一个元素 交换
+            if (arr[j - 1] > arr[j]) {
+                swap(arr, j - 1, j)
+            } else {
+                // 如果当前元素大于上一个元素 就直接跳出循环
+                break
             }
-            return arr
         }
-        let initArr = [3, 5, 1, 9, 4, 2, 11, 8]
-        console.log(insertSort(initArr));
+    }
+    return arr
+}
+let initArr = []
+for (let i = 10000; i > 0; i--) {
+    initArr.push(i)
+}
+console.time('init1')
+console.log(insertSort(initArr));
+console.timeEnd('init1')
 ```
 
-测试用例： 5 7 6 4 8的排序
 
-1. 执行如下代码
 
-让temp等于5
 
-```diff
-                let iIndex = i
-                let moveIndex = i - 1
-                let temp = arr[i]
-```
 
-j第二层循环 执行这段, 还是让arr[0] = 5 break
+## 7.3 优化
 
-```diff
-                    // 如果蓝色指针指向 空
-                    if (!arr[j - 1]) {
-                        arr[j] = temp
-                        break
-                    }
-```
+1 优化的思路：把交换变成 “值的覆盖” 当后一个值小于前一个值时，不是每次都进行交换
 
-2. i 为 7 ，j也为7， j - 1 为5 因为 5 < 7 所以执行
+```js
+function insertSort(nums) {
+    for (let i = 1; i < nums.length; i++) {
+        // 把当前元素记忆
+        let insertValue = nums[i]
+        // j是上一个元素 当前元素和上一个元素进行比较
+        let j = i - 1
+        for (; j >= 0; j--) {
+            // 如果当前元素更小 就进行“赋值”操作
+            if (insertValue < nums[j]) {
+                nums[j + 1] = nums[j]
+            } else {
+                // “当前元素”比上一个元素大 就退出for循环比较
+                break
+            }
+        }
+        // “记忆的元素”赋值给nums[j+1]
+        nums[j + 1] = insertValue
+    }
+    return nums
+}
+// console.log(insertSort([5, 2, 3, 1]));
+// console.log(insertSort([-4, 0, 7, 4, 9, -5, -1, 0, -7, -1])); // 这个测试用例无法通过
 
-```diff
-                // 如果蓝色指针的值 小于 红色指针的值 直接continue
-                if (arr[moveIndex] < arr[i]) {
-                    continue
-                }
-```
+// console.time('init1')
+// let initArr = [3, 5, 1, 9, 4, 2, 11, 8]
+// console.log(insertSort(initArr));
+// console.timeEnd('init1')
 
-3. i 指向6，j指向7，temp赋值为6
-
-因为 7 大于6 ,只执行这段。变为 5 7  7 4 8
-
-```diff
-                    // 如果蓝色指针的值 大于 红色指针的值
-                    arr[j] = arr[j - 1]
-```
-
-j 为 7，j - 1位【简写 arr[j] 为7 arr[j - 1] 为 5】
-
-因为在内层for循环里面，temp为6，还是上面初始赋值，5 < 6。 把7 改为6，变为 5 6 7 4 8
-
-```diff
-                    if (arr[j - 1] < temp) {
-                        arr[j] = temp
-                        break
-                    }
-```
-
-4. temp是4，j - 1是7
-
-和上面一样， 7 > 4 要变为 5 6 7 7 8
-
-```diff
-arr[j] = arr[j - 1]
-```
-
-j - 1 为 6 ,大于4， 改 7 为6，变为 5 6 6 7 8
-
-然后5 依次类推
-
-5 5 6 7 8
-
-最后发现没有j - 1, 就赋值 j 为 temp
-
-```diff
-                    // 如果蓝色指针指向 空
-                    if (!arr[j - 1]) {
-                        arr[j] = temp
-                        break
-                    }
+// 采用赋值的形式 比直接交换 速度快了3倍
+let initArr = []
+for (let i = 10000; i > 0; i--) {
+    initArr.push(i)
+}
+console.time('init1')
+console.log(insertSort(initArr));
+console.timeEnd('init1')
 ```
 
 
